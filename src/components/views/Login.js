@@ -27,14 +27,14 @@ function LoginScreen(props) {
 
 const styles = StyleSheet.create({
 	icon: {
-		fontSize: 25,
+		fontSize: 30,
 		color: '#FFFFFF',
 		textAlign: 'center',
-		
+		left: 10,
 	},
 	text: {
 		color: '#FFFFFF',
-		fontSize: 25,
+		fontSize: 30,
 		textAlign: 'center'
 	},
 	container: {
@@ -57,7 +57,10 @@ const styles = StyleSheet.create({
 		zIndex: 4,
 		bottom: -15,
 		position: 'absolute',
-		borderRadius: 15,
+		borderRadius: 25,
+		shadowColor: 'black',
+		shadowOpacity: 0.2,
+		shadowRadius: 25,
 	},
 	button: {
 		// flexDirection: 'row',

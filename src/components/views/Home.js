@@ -52,7 +52,10 @@ const styles = StyleSheet.create({
 		width: '100%',
 		backgroundColor: '#FFFFFF',
 		zIndex: 2,
-		borderRadius: 25
+		borderRadius: 25,
+		shadowColor: 'black',
+		shadowOpacity: 0.2,
+		shadowRadius: 25,
 	},
 	text: {
 		color: '#b251db',
