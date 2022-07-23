@@ -1,25 +1,28 @@
 import { StyleSheet, View, Button, Text, Image, TouchableOpacity } from 'react-native';
-// import useAccount from '../hooks/useAccount.js';
+import useAccount from '../hooks/useAccount.js';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import SigninImage from '../assets/SignIn.png';
 
-function LoginScreen(props) {
+function LoginScreen() {
 
-	// const { promptSignin, token } = useAccount();
+	const { promptSignin, token } = useAccount();
 
 	return (
 			<View style={styles.container}>
 				<Image style={styles.image} source={SigninImage} /> 
 				<View style={styles.white}>
 					<View>
-						<TouchableOpacity style={styles.button}>
-							{/* <Ionicons name="log-in-outline" style={styles.icon}></Ionicons> */}
+						<TouchableOpacity
+							style={styles.button}
+							onPress={() => promptSignin()}
+						>
+							{<Ionicons name="log-in-outline" style={styles.icon}></Ionicons>}
 							<Text style={styles.text}>
 								Sign in
 							</Text>
 						</TouchableOpacity>
-						{/* {token !== '' && <Text>{token}</Text>} */}
+						{token !== '' && <Text>{token}</Text>}
 					</View>
 				</View>
 			</View>
@@ -36,7 +39,8 @@ const styles = StyleSheet.create({
 	text: {
 		color: '#FFFFFF',
 		fontSize: 30,
-		textAlign: 'center'
+		textAlign: 'center',
+		left: 90
 	},
 	container: {
 		backgroundColor: '#b251db',
@@ -64,7 +68,7 @@ const styles = StyleSheet.create({
 		shadowRadius: 25,
 	},
 	button: {
-		// flexDirection: 'row',
+		flexDirection: 'row',
 		backgroundColor: '#b251db',
 		alignSelf: 'center',
 		paddingVertical: 15,
