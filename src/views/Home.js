@@ -7,19 +7,20 @@ import {
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ScanScreen from './Scan';
+import HomeImage from '../assets/Home.png';
 
 function HomeScreen(props) {
 	return (
 		<View style={styles.background}>
-			<Image style={styles.image} source={require('./Group5.png')} />
+			<Image style={styles.image} source={HomeImage} />
 			<View style={styles.whiteBackground}>
 				<View style={styles.row}>
-					<Ionicons name="arrow-back" style={styles.arrow} size={50}/>
+					<Ionicons name="chevron-forward-outline" style={styles.arrow} size={40}/>
 					<Text style={styles.text}>
-						swipe right to access menu
+						swipe to access menu
 					</Text>
 				</View>
-				<TouchableOpacity 
+				<TouchableOpacity
 					style={styles.button}
 				>
 					<Ionicons name='camera-outline' style={styles.camera} size={50}/>

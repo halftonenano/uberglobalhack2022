@@ -11,10 +11,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Camera, CameraType } from 'expo-camera';
 
-import HelloWorld from './src/components/views/HelloWorld';
-import HomeScreen from './src/components/views/Home';
-import ScanScreen from './src/components/views/Scan';
-import LoginScreen from './src/components/views/Login';
+import HelloWorld from './src/views/HelloWorld';
+import HomeScreen from './src/views/Home';
+import ScanScreen from './src/views/Scan';
+import LoginScreen from './src/views/Login';
 
 const MY_SECURE_AUTH_STATE_KEY = 'MySecureAuthStateKey';
 
@@ -61,7 +61,7 @@ export default function App() {
 						return (<Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />);
 					}}}
 				/>
-				<Drawer.Screen name='Scan' component={HelloWorld}
+				<Drawer.Screen name='Scan' component={ScanScreen}
 					options={{ drawerIcon: ({ focused, color }) => {
 						return (<Ionicons name={focused ? 'camera' : 'camera-outline'} size={24} color={color} />);
 					}}}

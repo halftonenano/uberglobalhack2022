@@ -2,6 +2,7 @@ import { StyleSheet, View, Button, Text, Image, TouchableOpacity } from 'react-n
 // import useAccount from '../hooks/useAccount.js';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
+import SigninImage from '../assets/SignIn.png';
 
 function LoginScreen(props) {
 
@@ -9,7 +10,7 @@ function LoginScreen(props) {
 
 	return (
 			<View style={styles.container}>
-				<Image style={styles.image} source={require('./SignIn.png')} /> 
+				<Image style={styles.image} source={SigninImage} /> 
 				<View style={styles.white}>
 					<View>
 						<TouchableOpacity style={styles.button}>
