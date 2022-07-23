@@ -11,18 +11,20 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Camera, CameraType } from 'expo-camera';
 
-import HelloWorld from './src/views/HelloWorld';
+import { TokenContext } from './src/hooks/useAccount';
+
 import HomeScreen from './src/views/Home';
 import ScanScreen from './src/views/Scan';
 import LoginScreen from './src/views/Login';
-
-const MY_SECURE_AUTH_STATE_KEY = 'MySecureAuthStateKey';
+import SavedScreen from './src/views/Saved';
 
 const Drawer = createDrawerNavigator();
 
 export default function App() {
 	const [ hasPermission, setHasPermission ] = useState(null);
 	const [ type, setType ] = useState(CameraType.back);
+
+	const [ token, setToken ] = useState('');
 
 	useEffect(() => {
 		(async () => {
@@ -32,52 +34,54 @@ export default function App() {
 	});
 
 	return (
-		<NavigationContainer styles={styles.navContainer}>
-			<Drawer.Navigator
-				initialRouteName='Scan'
-				screenOptions={{
-					drawerStyle: {
-					backgroundColor: '#b251db',
-					},
-					headerStyle: {
+		<TokenContext.Provider value={{ token, setToken }}>
+			<NavigationContainer styles={styles.navContainer}>
+				<Drawer.Navigator
+					initialRouteName='Home'
+					screenOptions={{
+						drawerStyle: {
 						backgroundColor: '#b251db',
-						borderBottomColor: '#b251db',
-					},
-					headerShown: false,
-					// drawerHideStatusBarOnOpen: true,
-					swipeEdgeWidth: 300,
-					swipeMinDistance: 30,
+						},
+						headerStyle: {
+							backgroundColor: '#b251db',
+							borderBottomColor: '#b251db',
+						},
+						headerShown: false,
+						// drawerHideStatusBarOnOpen: true,
+						swipeEdgeWidth: 300,
+						swipeMinDistance: 30,
 
-					drawerActiveBackgroundColor: '#c863f2',
-					drawerInactiveTintColor: 'white',
-					drawerActiveTintColor: 'white',
+						drawerActiveBackgroundColor: '#c863f2',
+						drawerInactiveTintColor: 'white',
+						drawerActiveTintColor: 'white',
 
-					drawerType: 'slide',
-					overlayColor: 'transparent'
-				}}
-			>
-				<Drawer.Screen name='Home' component={HomeScreen}
-					options={{ drawerIcon: ({ focused, color }) => {
-						return (<Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />);
-					}}}
-				/>
-				<Drawer.Screen name='Scan' component={ScanScreen}
-					options={{ drawerIcon: ({ focused, color }) => {
-						return (<Ionicons name={focused ? 'camera' : 'camera-outline'} size={24} color={color} />);
-					}}}
-				/>
-				<Drawer.Screen name='Saved' component={HelloWorld}
-					options={{ drawerIcon: ({ focused, color }) => {
-						return (<Ionicons name={focused ? 'document-text' : 'document-text-outline'} size={24} color={color} />);
-					}}}
-				/>
-				<Drawer.Screen name='Login' component={LoginScreen}
-					options={{ drawerIcon: ({ focused, color }) => {
-						return (<Ionicons name={focused ? 'log-in' : 'log-in-outline'} size={24} color={color} />);
-					}}}
-				/>
-			</Drawer.Navigator>
-		</NavigationContainer>
+						drawerType: 'slide',
+						overlayColor: 'transparent'
+					}}
+				>
+					<Drawer.Screen name='Home' component={HomeScreen}
+						options={{ drawerIcon: ({ focused, color }) => {
+							return (<Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />);
+						}}}
+					/>
+					<Drawer.Screen name='Scan' component={ScanScreen}
+						options={{ drawerIcon: ({ focused, color }) => {
+							return (<Ionicons name={focused ? 'camera' : 'camera-outline'} size={24} color={color} />);
+						}}}
+					/>
+					<Drawer.Screen name='Saved' component={SavedScreen}
+						options={{ drawerIcon: ({ focused, color }) => {
+							return (<Ionicons name={focused ? 'document-text' : 'document-text-outline'} size={24} color={color} />);
+						}}}
+					/>
+					<Drawer.Screen name='Login' component={LoginScreen}
+						options={{ drawerIcon: ({ focused, color }) => {
+							return (<Ionicons name={focused ? 'log-in' : 'log-in-outline'} size={24} color={color} />);
+						}}}
+					/>
+				</Drawer.Navigator>
+			</NavigationContainer>
+		</TokenContext.Provider>
 	);
 }
 

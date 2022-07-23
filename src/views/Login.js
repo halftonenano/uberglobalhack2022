@@ -1,12 +1,15 @@
-import { StyleSheet, View, Button, Text, Image, TouchableOpacity } from 'react-native';
-import useAccount from '../hooks/useAccount.js';
+import { useContext } from 'react'
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
+import useAccount, { TokenContext } from '../hooks/useAccount.js';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import SigninImage from '../assets/SignIn.png';
 
 function LoginScreen() {
 
-	const { promptSignin, token } = useAccount();
+	const { promptSignin } = useAccount();
+
+	const { token } = useContext(TokenContext);
 
 	return (
 			<View style={styles.container}>

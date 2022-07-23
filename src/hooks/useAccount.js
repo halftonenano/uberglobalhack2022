@@ -1,7 +1,12 @@
-import { useState, useEffect } from "react";
+import { useEffect, createContext, useContext } from "react";
 import * as AuthSession from "expo-auth-session";
 
 import { Alert, Platform } from "react-native";
+
+export const TokenContext = createContext({
+	token: '',
+	setToken: (nToken) => {}
+});
 
 const auth0ClientId = 'Yg1JRsLDpaPxOtY09ReACGpOjwRQBNK2';
 const authorizationEndpoint = 'https://uberglobalhack.us.auth0.com/authorize';
@@ -11,7 +16,7 @@ const redirectUri = AuthSession.makeRedirectUri({ useProxy });
 
 export default function useAccount() {
 
-	const [ token, setToken ] = useState('');
+	const { setToken } = useContext(TokenContext);
 
 	const [ request, result, promptAsync ] = AuthSession.useAuthRequest(
 		{
@@ -30,9 +35,6 @@ export default function useAccount() {
 	);
 
 	let promptSignin = () => promptAsync({ useProxy });
-
-	console.log(`Redirect URL: ${redirectUri}`);
-	console.log(result);
 
 	useEffect(() => {
 		if (result) {
@@ -55,5 +57,5 @@ export default function useAccount() {
 		}
 	}, [ result ]);
 
-	return { promptSignin, token };
+	return { promptSignin };
 }
