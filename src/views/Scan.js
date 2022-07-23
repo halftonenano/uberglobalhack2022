@@ -4,17 +4,14 @@ import {
 	Text,
 	View,
 	TouchableOpacity,
-	Button,
 	ImageBackground,
-	Alert
 } from 'react-native';
+import { makeRequest } from '../tools/requester'
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { StatusBar } from 'expo-status-bar';
 import { Camera, CameraType } from 'expo-camera';
-
-// import recognize from './tools/recognize.js';
 
 function ScanScreen() {
 	const [ hasPermission, setHasPermission ] = useState(null);
@@ -32,12 +29,10 @@ function ScanScreen() {
 	const [ capturedImage, setCapturedImage ] = useState(undefined);
 
 	async function takePicture() {
-		const photo = await camera.current.takePictureAsync();
-		// const photo = await camera.current.takePictureAsync({ base64: true });
+		const photo = await camera.current.takePictureAsync({ base64: true });
 		setPreviewVisible(true);
 		setCapturedImage(photo);
-
-		recognize(photo);
+		makeRequest(photo);
 	}
 
 	function CameraPreview({ photo }) {
