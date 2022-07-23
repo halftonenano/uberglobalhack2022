@@ -4,7 +4,8 @@ import {
 } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContent } from '@react-navigation/drawer';
+import CustomDrawerContent from './src/components/CustomDrawerContent';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -21,17 +22,8 @@ import SavedScreen from './src/views/Saved';
 const Drawer = createDrawerNavigator();
 
 export default function App() {
-	const [ hasPermission, setHasPermission ] = useState(null);
-	const [ type, setType ] = useState(CameraType.back);
 
 	const [ token, setToken ] = useState('');
-
-	useEffect(() => {
-		(async () => {
-			const { status } = await Camera.requestCameraPermissionsAsync();
-			setHasPermission(status === 'granted');
-		})();
-	});
 
 	return (
 		<TokenContext.Provider value={{ token, setToken }}>
@@ -58,6 +50,7 @@ export default function App() {
 						drawerType: 'slide',
 						overlayColor: 'transparent'
 					}}
+					drawerContent={CustomDrawerContent}
 				>
 					<Drawer.Screen name='Home' component={HomeScreen}
 						options={{ drawerIcon: ({ focused, color }) => {
