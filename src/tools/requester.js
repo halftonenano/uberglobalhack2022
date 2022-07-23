@@ -1,12 +1,32 @@
-import axios from "axios";
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+import axios from 'axios';
 
-export async function makeRequest(data) {
+export async function makeRequest(data, token) {
 
-	axios.post('https://n3pie4yytnaqfodimpqzu2dtti0afhcu.lambda-url.us-west-1.on.aws/', {
-		image: data
+	const manipResult = await manipulateAsync(
+		data.uri,
+		[
+			{ resize: { height: 1500 } }
+		],
+		{ base64: true, compress: 0.8, format: SaveFormat.PNG }
+	);
+
+	axios.post('https://api.textbooktldr.com/analyze', {
+		image: manipResult.base64
+	}, {
+		headers: {
+			'Authorization': 'Bearer ' + token
+		}
 	}).then((response) => {
 		console.log(response.data);
-	});
+	}).catch((error) => console.log(error));
 
-	// console.log('NOTHelloWorld');
+	axios.post('https://api.textbooktldr.com/summarize', {
+	}, {
+		headers: {
+			'Authorization': 'Bearer ' + token
+		}
+	}).then((response) => {
+		console.log(response.data);
+	}).catch((error) => console.log(error));
 }

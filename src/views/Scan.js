@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import {
 	StyleSheet,
 	Text,
@@ -6,6 +6,8 @@ import {
 	TouchableOpacity,
 	ImageBackground,
 } from 'react-native';
+
+import { TokenContext } from '../hooks/useAccount.js';
 import { makeRequest } from '../tools/requester'
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -14,6 +16,8 @@ import { StatusBar } from 'expo-status-bar';
 import { Camera, CameraType } from 'expo-camera';
 
 function ScanScreen() {
+	const { token } = useContext(TokenContext);
+
 	const [ hasPermission, setHasPermission ] = useState(null);
 	const [ type, setType ] = useState(CameraType.back);
 	const camera = useRef(undefined);
@@ -29,30 +33,39 @@ function ScanScreen() {
 	const [ capturedImage, setCapturedImage ] = useState(undefined);
 
 	async function takePicture() {
-		const photo = await camera.current.takePictureAsync({ base64: true });
+		const photo = await camera.current.takePictureAsync();
 		setPreviewVisible(true);
 		setCapturedImage(photo);
-		makeRequest(photo);
+		makeRequest(photo, token);
 	}
 
 	function CameraPreview({ photo }) {
 		return (
 		  <View style={styles.container}>
-			<ImageBackground
-				source={{uri: photo && photo.uri}}
-				style={styles.preview}
-			>
-				<View style={styles.innerWrapper}>
-
-					<TouchableOpacity
-						style={styles.button}
-						onPress={() => setPreviewVisible(false)}
-					>
-						<Ionicons style={styles.icon} name='close' size={46} color='white' />
-					</TouchableOpacity>
+				<ImageBackground
+					source={{uri: photo && photo.uri}}
+					style={styles.preview}
+					// blurRadius={75}
+				>
+					<View style={styles.innerWrapper}>
+						<View style={styles.processPopup}>
+							<Text style={styles.text}>
+								Processing
+							</Text>
+							<Ionicons style={styles.sendIcon} name='send-outline' size={46} color='white' />
+							<Ionicons style={styles.timeIcon} name='time' size={23} color='white' />
+							<Ionicons style={styles.hardwareIcon} name='hardware-chip-outline' size={58} color='white' />
+							<Ionicons style={styles.gridIcon} name='grid-outline' size={20} color='white' />
+						</View>
+						<TouchableOpacity
+							style={styles.button}
+							onPress={() => setPreviewVisible(false)}
+						>
+							<Ionicons style={styles.iconDefault} name='close' size={46} color='white' />
+						</TouchableOpacity>
 					
-				</View>
-			</ImageBackground>
+					</View>
+				</ImageBackground>
 			<StatusBar style='light' />
 		  </View>
 		);
@@ -74,6 +87,7 @@ function ScanScreen() {
 				style={styles.camera}
 				type={type}
 				ref={(r) => { camera.current = r }}
+				o
 			>
 
 				<View style={styles.innerWrapper}>
@@ -82,7 +96,7 @@ function ScanScreen() {
 						style={styles.button}
 						onPress={() => takePicture()}
 					>
-						<Ionicons style={styles.icon} name='camera' size={46} color='white' />
+						<Ionicons style={styles.iconDefault} name='camera' size={46} color='white' />
 					</TouchableOpacity>
 
 				</View>
@@ -98,7 +112,6 @@ const styles = StyleSheet.create({
 		backgroundColor: '#b251db',
 		padding: 15,
 		paddingTop: 45,
-		// height: '100%'
 	},
 	camera: {
 		height: '100%',
@@ -138,9 +151,34 @@ const styles = StyleSheet.create({
 		color: 'white',
 		alignSelf: 'center',
     	fontSize: 30,
+		top: 25,
 	},
-	icon: {
+	iconDefault: {
 		alignSelf: 'center'
+	},
+	processPopup: {
+		width: '100%',
+		height: 200,
+		alignSelf: 'center',
+		backgroundColor: '#b251db',
+		borderRadius: 15,
+		top: 150
+	},
+	sendIcon: {
+		left: 80,
+		top: 60,
+	},
+	timeIcon: {
+		top: 31,
+		left: 108,
+	},
+	hardwareIcon: {
+		left: 168,
+		bottom: 20,
+	},
+	gridIcon: {
+		left: 185,
+		bottom: 62,
 	}
 });
 
