@@ -6,10 +6,10 @@ import {
 	 TouchableOpacity,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import ScanScreen from './Scan';
 import HomeImage from '../assets/Home.png';
 
-function HomeScreen(props) {
+function HomeScreen({ navigation }) {
+
 	return (
 		<View style={styles.background}>
 			<Image style={styles.image} source={HomeImage} />
@@ -22,6 +22,7 @@ function HomeScreen(props) {
 				</View>
 				<TouchableOpacity
 					style={styles.button}
+					onPress={() => navigation.navigate('Scan')}
 				>
 					<Ionicons name='camera-outline' style={styles.camera} size={50}/>
 				</TouchableOpacity>
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
 		width: 175,
 		height: 250,
 		left: 10,
-		top: 60,
+		top: '15%',
 		position: 'absolute',
 	},
 	whiteBackground: {
@@ -51,19 +52,21 @@ const styles = StyleSheet.create({
 		bottom: -15,
 		height: '40%',
 		width: '100%',
-		backgroundColor: '#FFFFFF',
+		backgroundColor: 'white',
 		zIndex: 2,
-		borderRadius: 25,
-		shadowColor: 'black',
-		shadowOpacity: 0.2,
-		shadowRadius: 25,
+		borderTopLeftRadius: 18,
+		borderTopRightRadius: 18,
+		// shadowColor: 'black',
+		// shadowOpacity: 0.2,
+		// shadowRadius: 25,
+		padding: 15
 	},
 	text: {
 		color: '#b251db',
 		fontWeight: 'bold',
-		fontSize: 25,
+		fontSize: 21,
 		width: 200,
-		top: 20,
+		top: 3,
 		left: 25
 	},
 	arrow: {
@@ -82,7 +85,7 @@ const styles = StyleSheet.create({
 		shadowRadius: 15,
 		position: 'absolute',
 		zIndex: 4,
-		bottom: 30
+		bottom: 50
 	},
 	camera: {
 		color: 'white',
