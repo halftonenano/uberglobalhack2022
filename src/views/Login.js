@@ -14,13 +14,14 @@ function LoginScreen() {
 	return (
 			<View style={styles.container}>
 				<Image style={styles.image} source={SigninImage} /> 
+				<Ionicons name='key' style={styles.graphic} size={300} />
 				<View style={styles.white}>
 					<View>
 						<TouchableOpacity
 							style={styles.button}
 							onPress={() => promptSignin()}
 						>
-							{<Ionicons name="log-in-outline" style={styles.icon}></Ionicons>}
+							<Ionicons name='log-in-outline' style={styles.icon} size={38} />
 							<Text style={styles.text}>
 								Sign in
 							</Text>
@@ -34,16 +35,14 @@ function LoginScreen() {
 
 const styles = StyleSheet.create({
 	icon: {
-		fontSize: 30,
-		color: '#FFFFFF',
-		textAlign: 'center',
-		left: 10,
+		color: 'white',
+		alignSelf: 'center',
+		left: -15,
 	},
 	text: {
 		color: '#FFFFFF',
-		fontSize: 30,
-		textAlign: 'center',
-		left: 90
+		fontSize: 25,
+		alignSelf: 'center',
 	},
 	container: {
 		backgroundColor: '#b251db',
@@ -52,37 +51,44 @@ const styles = StyleSheet.create({
 		zIndex: 1,
 	},
 	image: {
-		width: 100,
+		width: 120,
 		height: 275,
-		left: 10,
-		top: 60,
-		zIndex: 2,
+		left: 12,
+		top: '15%',
+		position: 'absolute',
+	},
+	graphic: {
+		color: '#D39AEC',
+		position: 'absolute',
+		right: -90,
+		top: '20%'
 	},
 	white: {
-		backgroundColor: '#FFFFFF',
+		position: 'absolute',
+		bottom: 0,
 		height: '40%',
 		width: '100%',
-		zIndex: 4,
-		bottom: -15,
-		position: 'absolute',
-		borderRadius: 25,
-		shadowColor: 'black',
-		shadowOpacity: 0.2,
-		shadowRadius: 25,
+		backgroundColor: 'white',
+		zIndex: 2,
+		borderTopLeftRadius: 18,
+		borderTopRightRadius: 18,
+		// shadowColor: 'black',
+		// shadowOpacity: 0.2,
+		// shadowRadius: 25,
+		padding: 25,
 	},
 	button: {
 		flexDirection: 'row',
 		backgroundColor: '#b251db',
 		alignSelf: 'center',
 		paddingVertical: 15,
-		width: '88%',
+		width: '100%',
 		borderRadius: 15,
 		shadowColor: 'black',
 		shadowOpacity: 0.2,
 		shadowRadius: 15,
-		alignContent: 'flex-end',
+		justifyContent: 'center',
 		zIndex: 3,
-		marginVertical: 25,
 	},
 });
 

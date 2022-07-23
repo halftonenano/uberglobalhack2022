@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-
 import {
 	StyleSheet
 } from 'react-native';
@@ -9,6 +8,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 
+import { StatusBar } from 'expo-status-bar';
 import { Camera, CameraType } from 'expo-camera';
 
 import { TokenContext } from './src/hooks/useAccount';
@@ -81,6 +81,7 @@ export default function App() {
 					/>
 				</Drawer.Navigator>
 			</NavigationContainer>
+			<StatusBar style="light" />
 		</TokenContext.Provider>
 	);
 }

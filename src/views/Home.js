@@ -13,13 +13,16 @@ function HomeScreen({ navigation }) {
 	return (
 		<View style={styles.background}>
 			<Image style={styles.image} source={HomeImage} />
+			<Ionicons name='newspaper' style={styles.graphic} size={300} />
 			<View style={styles.whiteBackground}>
-				<View style={styles.row}>
-					<Ionicons name="chevron-forward-outline" style={styles.arrow} size={40}/>
-					<Text style={styles.text}>
-						swipe to access menu
-					</Text>
-				</View>
+				<TouchableOpacity onPress={() => navigation.openDrawer()}>
+					<View style={styles.row}>
+						<Ionicons name='chevron-forward-outline' style={styles.arrow} size={40}/>
+						<Text style={styles.text}>
+							swipe or tap to{'\n'}access menu
+						</Text>
+					</View>
+				</TouchableOpacity>
 				<TouchableOpacity
 					style={styles.button}
 					onPress={() => navigation.navigate('Scan')}
@@ -44,13 +47,19 @@ const styles = StyleSheet.create({
 		width: 175,
 		height: 250,
 		left: 10,
-		top: '15%',
+		top: '13%',
 		position: 'absolute',
+	},
+	graphic: {
+		color: '#D39AEC',
+		position: 'absolute',
+		right: -200,
+		top: '13%'
 	},
 	whiteBackground: {
 		position: 'absolute',
-		bottom: -15,
-		height: '40%',
+		bottom: 0,
+		height: '45%',
 		width: '100%',
 		backgroundColor: 'white',
 		zIndex: 2,
@@ -59,20 +68,20 @@ const styles = StyleSheet.create({
 		// shadowColor: 'black',
 		// shadowOpacity: 0.2,
 		// shadowRadius: 25,
-		padding: 15
+		padding: 15,
+		paddingTop: 20,
 	},
 	text: {
 		color: '#b251db',
 		fontWeight: 'bold',
 		fontSize: 21,
-		width: 200,
-		top: 3,
-		left: 25
+		alignSelf: 'center',
+		left: 25,
 	},
 	arrow: {
 		color: '#b251db',
-		left: 15,
-		top: 10
+		left: 10,
+		alignSelf: 'center',
 	},
 	button: {
 		backgroundColor: '#b251db',
@@ -85,7 +94,7 @@ const styles = StyleSheet.create({
 		shadowRadius: 15,
 		position: 'absolute',
 		zIndex: 4,
-		bottom: 50
+		bottom: 35
 	},
 	camera: {
 		color: 'white',
