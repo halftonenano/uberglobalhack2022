@@ -5,7 +5,7 @@ import useAccount, { TokenContext } from '../hooks/useAccount.js';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import SigninImage from '../assets/SignIn.png';
 
-function SignInScreen() {
+function SignInScreen({ navigation }) {
 
 	const { promptSignin } = useAccount();
 
@@ -13,6 +13,9 @@ function SignInScreen() {
 
 	return (
 			<View style={styles.container}>
+				<TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuBar}>
+					<Ionicons name='menu-outline' size={40} color='white'></Ionicons>
+				</TouchableOpacity>
 				<Image style={styles.image} source={SigninImage} /> 
 				<Ionicons name='key' style={styles.graphic} size={300} />
 				<View style={styles.white}>
@@ -37,6 +40,11 @@ function SignInScreen() {
 }
 
 const styles = StyleSheet.create({
+	menuBar: {
+		position: 'absolute',
+		top: 40,
+		left: 20
+	},
 	icon: {
 		color: 'white',
 		alignSelf: 'center',

@@ -47,10 +47,10 @@ export default function useAccount() {
 			}
 				if (result.type === "success") {
 				const jwtToken = result.params.id_token;
-				Alert.alert(
+				/*Alert.alert(
 					"Authentication Success",
 					jwtToken
-				);
+				);*/
 
 				setToken(jwtToken);
 			}
