@@ -51,7 +51,7 @@ function ScanScreen({ navigation }) {
 
 	if (previewVisible && capturedImage) {
 		return (
-			<CameraPreview photo={capturedImage} displayText={displayText} requestStatus={requestStatus} />
+			<CameraPreview photo={capturedImage} displayText={displayText} requestStatus={requestStatus} setPreviewVisible={setPreviewVisible} />
 		);
 	}
 
@@ -86,7 +86,7 @@ function ScanScreen({ navigation }) {
 	);
 }
 
-function DisplaySummary({ displayText }) {
+function DisplaySummary({ displayText, setPreviewVisible}) {
 
 	// const { addNewItem, removeAllItems, getAllItems } = useDatastore();
 	// addNewItem({ title: 'title1', time: '1658579054000', text: 'fhdjghjkfdshgjkfdshjgkfdshjgkfdshjkgsdf' })
@@ -131,7 +131,8 @@ function DisplaySummary({ displayText }) {
 	)
 }
 
-function CameraPreview({ photo, displayText, requestStatus }) {
+function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, cancelAndCloseButton }) {
+	const { token } = useContext(TokenContext);
 	return (
 	  <View style={styles.container}>
 			<ImageBackground
@@ -141,19 +142,43 @@ function CameraPreview({ photo, displayText, requestStatus }) {
 			>
 					{displayText === '' ? (
 						<View style={styles.innerWrapper}>
-							<View style={styles.processPopup}>
-								<Text style={styles.text}>
-									{requestStatus}
-								</Text>
-								<Ionicons style={styles.animation} name='information-circle-outline' size={46} color='white' />
-							</View>
+								{token !== '' ? (
+								<View style={styles.processPopup}>
+									<Text style={styles.text}>
+										{requestStatus}
+									</Text>
+									<Ionicons style={styles.animation} name='information-circle-outline' size={46} color='white' />
+									<CancelAndCloseButton text='Cancel' setPreviewVisible={setPreviewVisible} /> 
+								</View>
+								) : (
+								<View style={styles.processPopup}>
+									<Text style={styles.notSignedInText}>
+										{requestStatus}
+									</Text>
+									<CancelAndCloseButton text='Close' setPreviewVisible={setPreviewVisible}/>
+								</View>
+								)}
 						</View>
-					) : (
-						<DisplaySummary displayText={displayText} />
-					)}				
+						) : (
+							<DisplaySummary displayText={displayText} setPreviewVisible={setPreviewVisible} />
+						)}
 			</ImageBackground>
 		<StatusBar style='light' />
 	  </View>
+	);
+}
+
+function CancelAndCloseButton ({text, setPreviewVisible}) {
+	return (
+		<TouchableOpacity
+			style={styles.closeButton}
+			onPress={() => setPreviewVisible(false)}
+				>
+			<Ionicons style={styles.closeIcon} name='close' size={40} color='white' />
+			<Text style={styles.closeText}>
+				{text}
+			</Text>
+		</TouchableOpacity> 
 	);
 }
 
@@ -225,8 +250,8 @@ const styles = StyleSheet.create({
 		shadowRadius: 15,
 	},
 	animation: {
-		alignSelf: 'center',
 		position: 'absolute',
+		alignSelf: 'center',
 		top: 100
 	},
 	summaryBackground: {
@@ -264,8 +289,8 @@ const styles = StyleSheet.create({
 	summary: {
 		marginLeft: 20,
 		marginRight: 20,
-		top: '17%',
-		height: '100%',
+		top: '30%',
+		height: 500,
 		fontSize: 17,
 	},
 	copyButton: {
@@ -320,6 +345,38 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		left: '83%',
 		top: '10%'
+	},
+	closeButton: {
+		backgroundColor: '#ECD5F6',
+		alignSelf: 'center',
+		position: 'absolute',
+		bottom: -30,
+		width: '100%',
+		borderBottomLeftRadius: 15,
+		borderBottomRightRadius: 15,
+		shadowColor: 'black',
+		shadowOpacity: 0.2,
+		shadowRadius: 15,
+		height: '35%',
+	},
+	closeIcon: {
+		color:'#b251db',
+		flexDirection: 'row',
+		alignSelf: 'center',
+		top: 16,
+		left: 45,
+	},
+	closeText: {
+		color:'#b251db',
+		fontSize: 30,
+		left: 85,
+		bottom: 25
+	},
+	notSignedInText: {
+		color: 'white',
+		alignSelf: 'center',
+		fontSize: 30,
+		top: 45,
 	}
 	});
 
