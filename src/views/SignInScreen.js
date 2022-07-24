@@ -14,7 +14,7 @@ function SignInScreen({ navigation }) {
 	return (
 			<View style={styles.container}>
 				<TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuBar}>
-					<Ionicons name='menu-outline' size={40} color='white'></Ionicons>
+					<Ionicons name='menu-outline' size={35} color='white'></Ionicons>
 				</TouchableOpacity>
 				<Image style={styles.image} source={SigninImage} /> 
 				<Ionicons name='key' style={styles.graphic} size={300} />
@@ -42,8 +42,9 @@ function SignInScreen({ navigation }) {
 const styles = StyleSheet.create({
 	menuBar: {
 		position: 'absolute',
-		top: 40,
-		left: 20
+		top: 43,
+		left: 20,
+		zIndex: 10,
 	},
 	icon: {
 		color: 'white',
