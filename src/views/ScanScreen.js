@@ -7,7 +7,8 @@ import {
 	ImageBackground,
 	ScrollView, 
 	SafeAreaView,
-	Clipboard
+	Clipboard,
+	Alert
 } from 'react-native';
 
 import { TokenContext } from '../hooks/useAccount.js';
@@ -52,23 +53,19 @@ function ScanScreen({ navigation }) {
 
 	if (previewVisible && capturedImage) {
 		return (
-			<CameraPreview photo={capturedImage} displayText={displayText} requestStatus={requestStatus} setPreviewVisible={setPreviewVisible} />
+			<CameraPreview photo={capturedImage} displayText={displayText} requestStatus={requestStatus} setPreviewVisible={setPreviewVisible} setDisplayText={setDisplayText} navigation={navigation} />
 		);
 	}
-
-	const { addNewItem, removeAllItems, getAllItems } = useDatastore();
-
+	
 	return (
 		<View style={styles.container}>
-			{/* <Text style={styles.scanning}>Scanning</Text> */}
 			<TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuBar}>
-				<Ionicons name='menu-outline' size={40} color='white'></Ionicons>
+				<Ionicons name='menu-outline' size={35} color='white'></Ionicons>
 			</TouchableOpacity>
 			<Camera
 				style={styles.camera}
 				type={type}
 				ref={(r) => { camera.current = r }}
-				o
 			>
 
 				<View style={styles.innerWrapper}>
@@ -88,11 +85,16 @@ function ScanScreen({ navigation }) {
 	);
 }
 
-function DisplaySummary({ displayText, setPreviewVisible}) {
+function initializeData(setDisplayText) {
+	setDisplayText('')
+}
+
+function DisplaySummary({ displayText, setPreviewVisible, setDisplayText } ) {
 
 	const [ copyStatus, setCopyStatus ] = useState(false);
-	// const { addNewItem, removeAllItems, getAllItems } = useDatastore();
-	// addNewItem({ title: 'title1', time: '1658579054000', text: 'fhdjghjkfdshgjkfdshjgkfdshjgkfdshjkgsdf' })
+	const [ saveStatus, setSaveStatus ] = useState(false);
+	const { addNewItem, removeAllItems, getAllItems } = useDatastore();
+
 	displayText = displayText.substring(1);
 
 	return (
@@ -100,51 +102,64 @@ function DisplaySummary({ displayText, setPreviewVisible}) {
 			<View style={styles.summaryBackground}>
 				<View style={styles.displayTag}>
 					<TouchableOpacity
-								style={styles.closeSummaryButton}
-								onPress={() => setPreviewVisible(false)}
-							>
+						style={styles.closeSummaryButton}
+						onPress={() => {
+							setPreviewVisible(false);
+							initializeData(setDisplayText);
+						}}
+					>
 						<Ionicons style={styles.iconDefault} name='close' size={40} color='white' />
-					</TouchableOpacity> 
+					</TouchableOpacity>
 					<Text style={styles.tldr}>
 						TL;DR
 					</Text>
 				</View>
 				<SafeAreaView>
 					<ScrollView>
-						<Text style={styles.summary}>
+						<Text selectable={true} style={styles.summary}>
 							{displayText}
-							console.log(displayText)
 						</Text>
 					</ScrollView>
 				</SafeAreaView>
-				{!copyStatus ? (
-					<TouchableOpacity 
-						style={styles.copyButton} 
-						title="Copy"
-						onClick = {() => <CopyToClipBoard text={displayText} copied={setCopyStatus} />}>
-						<Text style={styles.copyText}>
-							Copy
-						</Text>
-						<Ionicons name="clipboard-outline" style={styles.copyIcon} size={20}/>
+				<View style={styles.row}>
+					{!copyStatus ? (
+						<TouchableOpacity 
+							style={styles.copyButton} 
+							title="Copy"
+							onPress={() => copyToClipBoard(displayText, setCopyStatus)}>
+							<Text style={styles.copyText}>
+								Copy
+							</Text>
+							<Ionicons name="clipboard-outline" style={styles.copyIcon} size={20}/>
+							</TouchableOpacity>
+						) : (
+							<Text style={styles.copiedText}>
+								Text copied
+							</Text>
+					)}
+					{!saveStatus ? (
+						<TouchableOpacity style={styles.saveButton}
+							onPress={() => save(displayText, setSaveStatus, addNewItem)}
+						>
+							<Text style={styles.saveText}>
+								Save
+							</Text>
+							<Ionicons name="save-outline" style={styles.saveIcon} size={20}/>
 						</TouchableOpacity>
 					) : (
-						<Text style={styles.copiedText}>
-							Text copied
+						<Text style={styles.savedText}>
+								Text saved
 						</Text>
 					)}
-				<TouchableOpacity style={styles.saveButton} title="Save">
-					<Text style={styles.saveText}>
-						Save
-					</Text>
-					<Ionicons name="save-outline" style={styles.saveIcon} size={20}/>
-				</TouchableOpacity>
+				</View>
 			</View>
 		</View>
 	)
 }
 
-function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible }) {
+function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, setDisplayText, navigation }) {
 	const { token } = useContext(TokenContext);
+
 	return (
 	  <View style={styles.container}>
 			<ImageBackground
@@ -155,24 +170,28 @@ function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible })
 					{displayText === '' ? (
 						<View style={styles.innerWrapper}>
 								{token !== '' ? (
-								<View style={styles.processPopup}>
-									<Text style={styles.text}>
-										{requestStatus}
-									</Text>
-									<Ionicons style={styles.animation} name='information-circle-outline' size={46} color='white' />
-									<CancelAndCloseButton text='Cancel' setPreviewVisible={setPreviewVisible} /> 
-								</View>
+									<>
+										<View style={styles.processPopup}>
+											<Text style={styles.text}>
+												{requestStatus}
+											</Text>
+											<Ionicons style={styles.animation} name='information-circle-outline' size={46} color='white' />
+										</View>
+										<CancelAndCloseButton text='Cancel' setPreviewVisible={setPreviewVisible} setDisplayText={setDisplayText}/> 
+									</>
 								) : (
-								<View style={styles.processPopup}>
-									<Text style={styles.notSignedInText}>
-										{requestStatus}
-									</Text>
-									<CancelAndCloseButton text='Close' setPreviewVisible={setPreviewVisible}/>
-								</View>
+									<>
+										<View style={styles.processPopup}>
+											<Text style={styles.notSignedInText}>
+												{requestStatus}
+											</Text>
+										</View>
+										<CancelAndCloseButton text='Close' setPreviewVisible={setPreviewVisible} setDisplayText={setDisplayText} needLogin={requestStatus === 'You are not signed in'} navigation={navigation} />
+									</>
 								)}
 						</View>
 						) : (
-							<DisplaySummary displayText={displayText} setPreviewVisible={setPreviewVisible} />
+							<DisplaySummary displayText={displayText} setPreviewVisible={setPreviewVisible} setDisplayText={setDisplayText} />
 						)}
 			</ImageBackground>
 		<StatusBar style='light' />
@@ -180,23 +199,71 @@ function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible })
 	);
 }
 
-function CancelAndCloseButton ({text, setPreviewVisible}) {
+function CancelAndCloseButton ({ text, setPreviewVisible, setDisplayText, needLogin, navigation }) {
+
+	if (needLogin === true) {
+		return (
+			<TouchableOpacity
+				style={styles.closeButton}
+				onPress={() => { 
+					setPreviewVisible(false);
+					initializeData(setDisplayText);
+					navigation.navigate('Sign in');
+				}}
+			>
+				<Ionicons style={[ styles.closeIcon, { left: -15, top: -2 } ]} name='log-in-outline' size={38} color='white' />
+				<Text style={styles.closeText}>
+					Sign in
+				</Text>
+			</TouchableOpacity>
+		);
+	}
+
 	return (
 		<TouchableOpacity
 			style={styles.closeButton}
-			onPress={() => setPreviewVisible(false)}
-				>
-			<Ionicons style={styles.closeIcon} name='close' size={40} color='white' />
+			onPress={() => { 
+				setPreviewVisible(false);
+				initializeData(setDisplayText);
+			}}
+		>
+			<Ionicons style={styles.closeIcon} name='close' size={28} color='white' />
 			<Text style={styles.closeText}>
 				{text}
 			</Text>
-		</TouchableOpacity> 
+		</TouchableOpacity>
 	);
 }
 
-function CopyToClipBoard (text, copied) {
-	Clipboard.setString({text})
-	copied(true)
+function copyToClipBoard (text, copied) {
+	Clipboard.setString(text)
+	copied(true);
+}
+
+function save(text, setSaveStatus, addNewItem) {
+	
+	Alert.prompt(
+		'Please title this summary',
+		undefined,
+		[
+			{
+				text:'Cancel',
+				onPress: () => { console.log('Cancel Pressed') },
+				style: 'cancel'
+			},
+			{
+				text:'OK',
+				onPress: (title) => { 
+					console.log(`OK Pressed, title: ${title}`);
+					setSaveStatus(true);
+					addNewItem({ title: title, time: String(Date.now()), text: text });
+					console.log({ title: title, time: String(Date.now()), text: text });
+				}
+			}
+		]
+	);
+	// const { addNewItem, removeAllItems, getAllItems } = useDatastore();
+	// addNewItem({ title: 'title1', time: '1658579054000', text: 'something' })
 }
 
 const styles = StyleSheet.create({
@@ -212,9 +279,16 @@ const styles = StyleSheet.create({
 	},
 	menuBar: {
 		position: 'absolute',
-		top: 40,
-		left: 20,
+		top: 58,
+		left: 30,
 		zIndex: 100,
+		backgroundColor: '#b251db',
+		borderRadius: 29,
+		paddingHorizontal: 22,
+		paddingVertical: 0,
+		shadowColor: 'black',
+		shadowOpacity: 0.2,
+		shadowRadius: 10
 	},
 	container: {
 		backgroundColor: '#b251db',
@@ -239,11 +313,13 @@ const styles = StyleSheet.create({
 		overflow: 'hidden',
 		display: 'flex',
 		justifyContent: 'center',
+		backgroundColor: '#D39AEC',
 	},
 	innerWrapper: {
 		height: '100%',
 		width: '100%',
-		padding: 25
+		padding: 25,
+		justifyContent: 'center',
 	},
 	button: {
 		backgroundColor: '#b251db',
@@ -261,33 +337,46 @@ const styles = StyleSheet.create({
 	text: {
 		color: 'white',
 		alignSelf: 'center',
-    	fontSize: 30,
-		top: 25,
+    	fontSize: 26,
 	},
 	iconDefault: {
 		alignSelf: 'center'
 	},
 	processPopup: {
 		width: '100%',
-		height: 200,
 		alignSelf: 'center',
+		alignItems: 'center',
 		backgroundColor: '#b251db',
-		borderRadius: 15,
-		top: 150,
+		padding: 25,
+		borderTopRightRadius: 15,
+		borderTopLeftRadius: 15,
 		shadowColor: 'black',
 		shadowOpacity: 0.2,
 		shadowRadius: 15,
 	},
-	animation: {
-		position: 'absolute',
+	closeButton: {
+		backgroundColor: '#ECD5F6',
 		alignSelf: 'center',
-		top: 100
+		width: '100%',
+		borderBottomLeftRadius: 15,
+		borderBottomRightRadius: 15,
+		shadowColor: 'black',
+		shadowOpacity: 0.2,
+		shadowRadius: 15,
+		marginTop: 3,
+		flexDirection: 'row',
+		alignContent: 'center',
+		justifyContent: 'center',
+		alignItems: 'center',
+		padding: 15
+	},
+	animation: {
+		marginTop: 15,
+		alignSelf: 'center',
 	},
 	summaryBackground: {
 		backgroundColor: 'white',
 		alignSelf: 'center',
-		// justifyContent: 'center',
-		height: '80%',
 		borderRadius: 15,
 		position: 'absolute',
 		bottom: 50,
@@ -298,40 +387,46 @@ const styles = StyleSheet.create({
 	},
 	displayTag: {
 		backgroundColor: '#b251db',
-		position: 'absolute',
-		height: '15%',
 		width: '100%',
 		zIndex: 40,
 		borderTopLeftRadius: 15,
 		borderTopRightRadius: 15,
 		shadowColor: 'black',
 		shadowOpacity: 0.2,
-		shadowRadius: 15,
+		shadowRadius: 10,
+		shadowOffset: {
+			height: 5
+		}
 	},
 	tldr: {
 		color: 'white',
-		fontSize: 30,
+		fontSize: 25,
 		alignSelf: 'center',
-		top: 20,
 		fontWeight: 'bold',
-		position: 'absolute'
+		padding: 14,
+		paddingBottom: 12
 	},
 	summary: {
+		paddingTop: 25,
 		marginLeft: 20,
 		marginRight: 20,
-		top: '10%',
-		height: 500,
+		height: 300,
 		fontSize: 17,
+		color: '#7B7B7B'
+	},
+	row: {
+		flexDirection: 'row',
+		padding: 15,
+		borderTopColor: '#cccccc',
+		borderTopWidth: 1
 	},
 	copyButton: {
-		position: 'absolute',
-		bottom: 35,
 		flexDirection: 'row',
 		backgroundColor: '#b251db',
-		left: '5%',
+		marginRight: 5,
 		paddingVertical: 15,
-		width: '42%',
-		borderRadius: 15,
+		flex: 1,
+		borderRadius: 8,
 		shadowColor: 'black',
 		shadowOpacity: 0.2,
 		shadowRadius: 15,
@@ -348,14 +443,12 @@ const styles = StyleSheet.create({
 		left: 15
 	},
 	saveButton: {
-		position: 'absolute',
-		bottom: 35,
 		flexDirection: 'row',
 		backgroundColor: '#b251db',
-		right: '5%',
+		marginLeft: 5,
 		paddingVertical: 15,
-		width: '42%',
-		borderRadius: 15,
+		flex: 1,
+		borderRadius: 8,
 		shadowColor: 'black',
 		shadowOpacity: 0.2,
 		shadowRadius: 15,
@@ -373,40 +466,22 @@ const styles = StyleSheet.create({
 	},
 	closeSummaryButton: {
 		position: 'absolute',
-		left: '83%',
-		top: '10%'
-	},
-	closeButton: {
-		backgroundColor: '#ECD5F6',
-		alignSelf: 'center',
-		position: 'absolute',
-		bottom: -30,
-		width: '100%',
-		borderBottomLeftRadius: 15,
-		borderBottomRightRadius: 15,
-		shadowColor: 'black',
-		shadowOpacity: 0.2,
-		shadowRadius: 15,
-		height: '35%',
+		right: 10,
+		top: 7
 	},
 	closeIcon: {
 		color:'#b251db',
-		flexDirection: 'row',
 		alignSelf: 'center',
-		top: 16,
-		left: 45,
+		left: -10
 	},
 	closeText: {
 		color:'#b251db',
-		fontSize: 30,
-		left: 85,
-		bottom: 25
+		fontSize: 26,
+		top: -1
 	},
 	notSignedInText: {
 		color: 'white',
-		alignSelf: 'center',
-		fontSize: 30,
-		top: 45,
+		fontSize: 26
 	},
 	copiedText: {
 		position: 'absolute',
@@ -418,7 +493,18 @@ const styles = StyleSheet.create({
 		width: '42%',
 		zIndex: 3,
 		fontSize: 20
+	},
+	savedText: {
+		position: 'absolute',
+		bottom: 35,
+		flexDirection: 'row',
+		color: '#b251db',
+		right: '10%',
+		paddingVertical: 15,
+		width: '42%',
+		zIndex: 3,
+		fontSize: 20
 	}
-	});
+});
 
 export default ScanScreen;
