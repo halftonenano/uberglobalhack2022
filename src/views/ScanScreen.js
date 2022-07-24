@@ -15,7 +15,9 @@ import { TokenContext } from '../hooks/useAccount.js';
 import { makeRequest } from '../tools/requester'
 
 import Ionicons from '@expo/vector-icons/Ionicons';
+import LoadingAnimation from '../assets/loading.mp4'
 
+import { Video } from 'expo-av';
 import { StatusBar } from 'expo-status-bar';
 import { Camera, CameraType } from 'expo-camera';
 import { useDatastore } from '../hooks/useDatastore.js';
@@ -159,6 +161,7 @@ function DisplaySummary({ displayText, setPreviewVisible, setDisplayText } ) {
 
 function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, setDisplayText, navigation }) {
 	const { token } = useContext(TokenContext);
+	const video = useRef(null);
 
 	return (
 	  <View style={styles.container}>
@@ -175,7 +178,14 @@ function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, s
 											<Text style={styles.text}>
 												{requestStatus}
 											</Text>
-											<Ionicons style={styles.animation} name='information-circle-outline' size={46} color='white' />
+											<Video
+												ref={video}
+												style={styles.animation}
+												source={LoadingAnimation}
+												shouldPlay={true}
+												resizeMode="contain"
+												isLooping
+											/>
 										</View>
 										<CancelAndCloseButton text='Cancel' setPreviewVisible={setPreviewVisible} setDisplayText={setDisplayText}/> 
 									</>
@@ -279,7 +289,7 @@ const styles = StyleSheet.create({
 	},
 	menuBar: {
 		position: 'absolute',
-		top: 58,
+		top: 60,
 		left: 30,
 		zIndex: 100,
 		backgroundColor: '#b251db',
@@ -346,7 +356,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 		alignSelf: 'center',
 		alignItems: 'center',
-		backgroundColor: '#b251db',
+		backgroundColor: '#ab3ed6',
 		padding: 25,
 		borderTopRightRadius: 15,
 		borderTopLeftRadius: 15,
@@ -371,8 +381,11 @@ const styles = StyleSheet.create({
 		padding: 15
 	},
 	animation: {
-		marginTop: 15,
+		marginTop: 8,
+		marginBottom: -7,
 		alignSelf: 'center',
+		height: 100,
+		width: 100,
 	},
 	summaryBackground: {
 		backgroundColor: 'white',
