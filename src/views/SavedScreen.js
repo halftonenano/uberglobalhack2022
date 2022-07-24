@@ -1,10 +1,9 @@
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useRef, useState } from 'react';
 
-export default function SavedScreen() {
+export default function SavedScreen({ navigation }) {
 
 	const [ savedData, setSavedData ] = useState();
 	const dataInit = useRef();
@@ -36,7 +35,11 @@ export default function SavedScreen() {
 	});
 
 	return (
+		
 		<View style={styles.background}>
+			<TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuBar}>
+				<Ionicons name='menu-outline' size={40} color='white'></Ionicons>
+			</TouchableOpacity>
 			<Text style={styles.heading}>Saved</Text>
 			{/* <TouchableOpacity
 				style={styles.button}
@@ -81,29 +84,9 @@ export default function SavedScreen() {
 
 function dateFromMilsec(time) {
 	var dt = new Date(time);
-	var datee = dt.getFullYear() + ' / ' + (dt.getMonth() + 1) + ' / ' + dt.getDate();
+	var datee = `${(dt.getMonth() + 1)} / ${dt.getDate()}    ${dt.getHours()}:${dt.getMinutes()}`
 
 	return (datee);
-}
-
-async function storeData(value) {
-	try {
-		await AsyncStorage.setItem('@saved_summaries', value)
-	} catch (e) {
-		// saving error
-		console.log('error saving');
-	}
-}
-
-async function getData() {
-	try {
-		const value = await AsyncStorage.getItem('@saved_summaries')
-		if (value !== null) {
-			return value;
-		}
-	} catch(e) {
-		// error reading value
-	}
 }
 
 const styles = StyleSheet.create({
@@ -113,7 +96,7 @@ const styles = StyleSheet.create({
 		// borderColor: '#b251db',
 		// borderWidth: 2,
 		alignSelf: 'center',
-		marginVertical: 15,
+		marginTop: 20,
 		borderRadius: 15,
 		backgroundColor: 'white',
 		shadowColor: 'black',
@@ -148,29 +131,31 @@ const styles = StyleSheet.create({
 		padding: 20,
 	},
 	background: {
-		height: '100%',
-		width: '100%',
 		backgroundColor: '#b251db',
 		zIndex: 1,
-		paddingTop: 90
+		paddingTop: 53
 	},
 	heading: {
 		fontSize: 24,
-		color: '#FFFFFF',
+		color: 'white',
 		position: 'absolute',
-		top: 45,
+		top: 47,
 		justifyContent: 'center',
 		alignSelf: 'center',
 		zIndex: 2,
 	},
+	menuBar: {
+		position: 'absolute',
+		top: 40,
+		left: 20
+	},
 	white: {
-		backgroundColor: '#FFFFFF',
+		bottom: -35,
+		backgroundColor: 'white',
 		height: '100%',
 		width: '100%',
 		zIndex: 2,
 		borderTopLeftRadius: 15,
 		borderTopRightRadius: 15,
-		borderTopColor: 'white',
-		borderTopWidth: 5,
 	}
 });
