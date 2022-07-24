@@ -31,6 +31,7 @@ function ScanScreen({ navigation }) {
 
 	const [ requestStatus, setRequestStatus ] = useState('uninitialized');
 	const [ displayText, setDisplayText ] = useState('');
+	const [ reqCancelled, setReqCancelled ] = useState(false);
 
 	useEffect(() => {
 		(async () => {
@@ -46,11 +47,20 @@ function ScanScreen({ navigation }) {
 		const photo = await camera.current.takePictureAsync();
 		setPreviewVisible(true);
 		setCapturedImage(photo);
-		makeRequest(photo, token, setRequestStatus, setDisplayText);
+		makeRequest(photo, token, setRequestStatus, setDisplayText, reqCancelled);
 	}
 
 	if (hasPermission === false) {
-		return <Text>No access to camera</Text>;
+		return (
+			<View style={styles.noPermissionBackground}>
+				<View style={styles.noPermissionBox}>
+					<Ionicons name='camera-outline' style={styles.noPermissionIcon} size={38} />
+					<Text style={styles.noPermissionText}>No access to camera </Text>
+					<Text style={styles.noPermissionSmallText}>Please enable permission in settings</Text>
+				</View>
+			</View>
+		);
+		
 	}
 
 	if (previewVisible && capturedImage) {
@@ -130,7 +140,7 @@ function DisplaySummary({ displayText, setPreviewVisible, setDisplayText }) {
 				>
 					{!copyStatus ? (
 						<>
-							<Ionicons name="clipboard-outline" style={styles.actionIcon} size={24}/>
+							<Ionicons name="clipboard-outline" style={styles.actionIcon} size={24} />
 							<Text style={styles.actionText}>
 								Copy
 							</Text>
@@ -162,7 +172,7 @@ function DisplaySummary({ displayText, setPreviewVisible, setDisplayText }) {
 	)
 }
 
-function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, setDisplayText, navigation }) {
+function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, setDisplayText, navigation, setRe }) {
 	const { token } = useContext(TokenContext);
 	const video = useRef(null);
 
@@ -190,7 +200,19 @@ function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, s
 												isLooping
 											/>
 										</View>
-										<CancelAndCloseButton text='Cancel' setPreviewVisible={setPreviewVisible} setDisplayText={setDisplayText}/> 
+										<TouchableOpacity
+											style={styles.closeButton}
+											onPress={() => { 
+												setPreviewVisible(false);
+												initializeData(setDisplayText);
+												set
+											}}
+										>
+											<Ionicons style={styles.closeIcon} name='close' size={28} color='white' />
+											<Text style={styles.closeText}>
+												Close
+											</Text>
+										</TouchableOpacity>
 									</>
 								) : (
 									<>
@@ -279,6 +301,39 @@ function save(text, setSaveStatus, addNewItem) {
 }
 
 const styles = StyleSheet.create({
+	noPermissionBackground: {
+		backgroundColor:'#b251db',
+		padding: 25,
+		height: '100%',
+		width: '100%',
+		justifyContent: 'center',
+	},
+	noPermissionBox: {
+		backgroundColor: 'white',
+		borderRadius: 15,
+		justifyContent: 'center',
+		shadowColor: 'black',
+		shadowOpacity: 0.2,
+		shadowRadius: 15,
+		padding: 30
+	},
+	noPermissionText: {
+		fontSize: 30,
+		textAlign: 'center',
+		color:'#b251db',
+		marginTop: 15,
+		marginBottom: 10,
+	},
+	noPermissionSmallText: {
+		fontSize: 17,
+		textAlign: 'center',
+		color:'#b251db',
+		marginVertical: 6,
+	},
+	noPermissionIcon: {
+		textAlign: 'center',
+		color:'#b251db',
+	},
 	scanning: {
 		color: 'white',
 		zIndex: 10,
