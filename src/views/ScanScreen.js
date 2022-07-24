@@ -32,97 +32,15 @@ function ScanScreen({ navigation }) {
 	const [ requestStatus, setRequestStatus ] = useState('uninitialized');
 	const [ displayText, setDisplayText ] = useState('');
 
-	const [ previewVisible, setPreviewVisible ] = useState(false);
-	const [ capturedImage, setCapturedImage ] = useState(undefined);
-
-	function DisplaySummary({ displayText }) {
-
-		// const { addNewItem, removeAllItems, getAllItems } = useDatastore();
-		// addNewItem({ title: 'title1', time: '1658579054000', text: 'fhdjghjkfdshgjkfdshjgkfdshjgkfdshjkgsdf' })
-		setDisplayText(displayText.substring(1));
-	
-		return (
-			<View style={styles.innerWrapper}>
-				<View style={styles.summaryBackground}>
-					<View style={styles.displayTag}>
-						<TouchableOpacity
-									style={styles.closeSummaryButton}
-									onPress={() => setPreviewVisible(false)}
-								>
-							<Ionicons style={styles.iconDefault} name='close' size={40} color='white' />
-						</TouchableOpacity> 
-						<Text style={styles.tldr}>
-							TL;DR
-						</Text>
-					</View>
-					<SafeAreaView>
-						<ScrollView>
-							<Text style={styles.summary}>
-								{displayText}
-								console.log(displayText)
-							</Text>
-						</ScrollView>
-					</SafeAreaView>
-					<TouchableOpacity 
-						style={styles.copyButton} title="Copy"
-					>
-						<Text style={styles.copyText}>
-							Copy
-						</Text>
-						<Ionicons name="clipboard-outline" style={styles.copyIcon} size={20}/>
-					</TouchableOpacity>
-					<TouchableOpacity style={styles.saveButton} title="Save">
-						<Text style={styles.saveText}>
-							Save
-						</Text>
-						<Ionicons name="save-outline" style={styles.saveIcon} size={20}/>
-					</TouchableOpacity>
-				</View>
-			</View>
-		)
-	}
-	
-	function CameraPreview({ photo, displayText, requestStatus }) {
-		return (
-		  <View style={styles.container}>
-				<ImageBackground
-					source={{uri: photo && photo.uri}}
-					style={styles.preview}
-					blurRadius={75}
-				>
-						{displayText === '' ? (
-							<View style={styles.innerWrapper}>
-								<View style={styles.processPopup}>
-									<Text style={styles.text}>
-										{requestStatus}
-									</Text>
-									{requestStatus === 'You are not signed in' ? (
-										<TouchableOpacity
-										style={styles.iconDefault}
-										onPress={() => setPreviewVisible(false)}
-										>
-											<Ionicons style={styles.closeIcon} name='close' size={40} color='white' />
-										</TouchableOpacity>
-									) : (
-										<Ionicons style={styles.animation} name='information-circle-outline' size={46} color='white' />
-									)}
-								</View>
-							</View>
-						) : (
-							<DisplaySummary displayText={{displayText}} />
-						)}				
-				</ImageBackground>
-			<StatusBar style='light' />
-		  </View>
-		);
-	}
-
 	useEffect(() => {
 		(async () => {
 			const { status } = await Camera.requestCameraPermissionsAsync();
 			setHasPermission(status === 'granted');
 		})();
 	}, []);
+
+	const [ previewVisible, setPreviewVisible ] = useState(false);
+	const [ capturedImage, setCapturedImage ] = useState(undefined);
 
 	async function takePicture() {
 		const photo = await camera.current.takePictureAsync();
@@ -477,11 +395,6 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		height: 100,
 		width: 100,
-	},
-	closeIcon: {
-		alignSelf: 'center',
-		position: 'absolute',
-		top: 90
 	},
 	summaryBackground: {
 		backgroundColor: 'white',
