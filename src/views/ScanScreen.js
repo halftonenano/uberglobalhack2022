@@ -6,7 +6,8 @@ import {
 	TouchableOpacity,
 	ImageBackground,
 	ScrollView, 
-	SafeAreaView
+	SafeAreaView,
+	Clipboard
 } from 'react-native';
 
 import { TokenContext } from '../hooks/useAccount.js';
@@ -59,6 +60,7 @@ function ScanScreen({ navigation }) {
 
 	return (
 		<View style={styles.container}>
+			{/* <Text style={styles.scanning}>Scanning</Text> */}
 			<TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuBar}>
 				<Ionicons name='menu-outline' size={40} color='white'></Ionicons>
 			</TouchableOpacity>
@@ -88,6 +90,7 @@ function ScanScreen({ navigation }) {
 
 function DisplaySummary({ displayText, setPreviewVisible}) {
 
+	const [ copyStatus, setCopyStatus ] = useState(false);
 	// const { addNewItem, removeAllItems, getAllItems } = useDatastore();
 	// addNewItem({ title: 'title1', time: '1658579054000', text: 'fhdjghjkfdshgjkfdshjgkfdshjgkfdshjkgsdf' })
 	displayText = displayText.substring(1);
@@ -114,12 +117,21 @@ function DisplaySummary({ displayText, setPreviewVisible}) {
 						</Text>
 					</ScrollView>
 				</SafeAreaView>
-				<TouchableOpacity style={styles.copyButton} title="Copy">
-					<Text style={styles.copyText}>
-						Copy
-					</Text>
-					<Ionicons name="clipboard-outline" style={styles.copyIcon} size={20}/>
-				</TouchableOpacity>
+				{!copyStatus ? (
+					<TouchableOpacity 
+						style={styles.copyButton} 
+						title="Copy"
+						onClick = {() => <CopyToClipBoard text={displayText} copied={setCopyStatus} />}>
+						<Text style={styles.copyText}>
+							Copy
+						</Text>
+						<Ionicons name="clipboard-outline" style={styles.copyIcon} size={20}/>
+						</TouchableOpacity>
+					) : (
+						<Text style={styles.copiedText}>
+							Text copied
+						</Text>
+					)}
 				<TouchableOpacity style={styles.saveButton} title="Save">
 					<Text style={styles.saveText}>
 						Save
@@ -131,7 +143,7 @@ function DisplaySummary({ displayText, setPreviewVisible}) {
 	)
 }
 
-function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, cancelAndCloseButton }) {
+function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible }) {
 	const { token } = useContext(TokenContext);
 	return (
 	  <View style={styles.container}>
@@ -182,7 +194,22 @@ function CancelAndCloseButton ({text, setPreviewVisible}) {
 	);
 }
 
+function CopyToClipBoard (text, copied) {
+	Clipboard.setString({text})
+	copied(true)
+}
+
 const styles = StyleSheet.create({
+	scanning: {
+		color: 'white',
+		zIndex: 10,
+		fontSize: 24,
+		alignSelf: 'center',
+		position: 'absolute',
+		top: 47,
+		justifyContent: 'center',
+		alignSelf: 'center',
+	},
 	menuBar: {
 		position: 'absolute',
 		top: 40,
@@ -194,6 +221,8 @@ const styles = StyleSheet.create({
 		padding: 15,
 		paddingTop: 45,
 		zIndex: 2,
+		height: '100%',
+		width: '100%',
 	},
 	camera: {
 		height: '100%',
@@ -257,6 +286,7 @@ const styles = StyleSheet.create({
 	summaryBackground: {
 		backgroundColor: 'white',
 		alignSelf: 'center',
+		// justifyContent: 'center',
 		height: '80%',
 		borderRadius: 15,
 		position: 'absolute',
@@ -289,7 +319,7 @@ const styles = StyleSheet.create({
 	summary: {
 		marginLeft: 20,
 		marginRight: 20,
-		top: '30%',
+		top: '10%',
 		height: 500,
 		fontSize: 17,
 	},
@@ -377,6 +407,17 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		fontSize: 30,
 		top: 45,
+	},
+	copiedText: {
+		position: 'absolute',
+		bottom: 35,
+		flexDirection: 'row',
+		color: '#b251db',
+		left: '10%',
+		paddingVertical: 15,
+		width: '42%',
+		zIndex: 3,
+		fontSize: 20
 	}
 	});
 
