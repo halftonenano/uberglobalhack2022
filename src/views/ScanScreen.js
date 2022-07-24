@@ -7,7 +7,6 @@ import {
 	ImageBackground,
 	ScrollView, 
 	SafeAreaView,
-	Clipboard,
 	Alert
 } from 'react-native';
 
@@ -18,6 +17,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import LoadingAnimation from '../assets/loading.mp4'
 
 import { Video } from 'expo-av';
+import * as Clipboard from 'expo-clipboard';
 import { StatusBar } from 'expo-status-bar';
 import { Camera, CameraType } from 'expo-camera';
 import { useDatastore } from '../hooks/useDatastore.js';
@@ -91,7 +91,7 @@ function initializeData(setDisplayText) {
 	setDisplayText('')
 }
 
-function DisplaySummary({ displayText, setPreviewVisible, setDisplayText } ) {
+function DisplaySummary({ displayText, setPreviewVisible, setDisplayText }) {
 
 	const [ copyStatus, setCopyStatus ] = useState(false);
 	const [ saveStatus, setSaveStatus ] = useState(false);
@@ -100,60 +100,67 @@ function DisplaySummary({ displayText, setPreviewVisible, setDisplayText } ) {
 	displayText = displayText.substring(1);
 
 	return (
-		<View style={styles.innerWrapper}>
-			<View style={styles.summaryBackground}>
-				<View style={styles.displayTag}>
-					<TouchableOpacity
-						style={styles.closeSummaryButton}
-						onPress={() => {
-							setPreviewVisible(false);
-							initializeData(setDisplayText);
-						}}
-					>
-						<Ionicons style={styles.iconDefault} name='close' size={40} color='white' />
-					</TouchableOpacity>
-					<Text style={styles.tldr}>
-						TL;DR
+		<View style={styles.summaryBackground}>
+			<View style={styles.displayTag}>
+				<TouchableOpacity
+					style={styles.closeSummaryButton}
+					onPress={() => {
+						setPreviewVisible(false);
+						initializeData(setDisplayText);
+					}}
+				>
+					<Ionicons style={styles.iconDefault} name='close' size={40} color='white' />
+				</TouchableOpacity>
+				<Text style={styles.tldr}>
+					TL;DR
+				</Text>
+			</View>
+			<SafeAreaView>
+				<ScrollView>
+					<Text selectable={true} style={styles.summary}>
+						{displayText}
 					</Text>
-				</View>
-				<SafeAreaView>
-					<ScrollView>
-						<Text selectable={true} style={styles.summary}>
-							{displayText}
+				</ScrollView>
+			</SafeAreaView>
+			<View style={styles.row}>
+				{!copyStatus ? (
+					<TouchableOpacity 
+						style={styles.copyButton}
+						title="Copy"
+						onPress={() => copyToClipBoard(displayText, setCopyStatus)}
+					>
+						<Ionicons name="clipboard-outline" style={styles.actionIcon} size={24}/>
+						<Text style={styles.actionText}>
+							Copy
 						</Text>
-					</ScrollView>
-				</SafeAreaView>
-				<View style={styles.row}>
-					{!copyStatus ? (
-						<TouchableOpacity 
-							style={styles.copyButton} 
-							title="Copy"
-							onPress={() => copyToClipBoard(displayText, setCopyStatus)}>
-							<Text style={styles.copyText}>
-								Copy
-							</Text>
-							<Ionicons name="clipboard-outline" style={styles.copyIcon} size={20}/>
-							</TouchableOpacity>
-						) : (
-							<Text style={styles.copiedText}>
-								Text copied
-							</Text>
-					)}
-					{!saveStatus ? (
-						<TouchableOpacity style={styles.saveButton}
-							onPress={() => save(displayText, setSaveStatus, addNewItem)}
-						>
-							<Text style={styles.saveText}>
-								Save
-							</Text>
-							<Ionicons name="save-outline" style={styles.saveIcon} size={20}/>
-						</TouchableOpacity>
-					) : (
-						<Text style={styles.savedText}>
-								Text saved
+					</TouchableOpacity>
+				) : (
+					<TouchableOpacity 
+						style={styles.copyButton}
+						title="Copy"
+						onPress={() => copyToClipBoard(displayText, setCopyStatus)}
+					>
+						<Text style={styles.actionDoneText}>
+							Text copied!
 						</Text>
-					)}
-				</View>
+					</TouchableOpacity>
+				)}
+				{!saveStatus ? (
+					<TouchableOpacity style={styles.saveButton}
+						onPress={() => save(displayText, setSaveStatus, addNewItem)}
+					>
+						<Text style={styles.actionText}>
+							Save
+						</Text>
+						<Ionicons name="save-outline" style={styles.actionIcon} size={24}/>
+					</TouchableOpacity>
+				) : (
+					<View style={styles.saveButton}>
+						<Text style={styles.actionDoneText}>
+								Text saved!
+						</Text>
+					</View>
+				)}
 			</View>
 		</View>
 	)
@@ -201,7 +208,9 @@ function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, s
 								)}
 						</View>
 						) : (
-							<DisplaySummary displayText={displayText} setPreviewVisible={setPreviewVisible} setDisplayText={setDisplayText} />
+							<View style={styles.innerWrapper}>
+								<DisplaySummary displayText={displayText} setPreviewVisible={setPreviewVisible} setDisplayText={setDisplayText} />
+							</View>
 						)}
 			</ImageBackground>
 		<StatusBar style='light' />
@@ -245,9 +254,9 @@ function CancelAndCloseButton ({ text, setPreviewVisible, setDisplayText, needLo
 	);
 }
 
-function copyToClipBoard (text, copied) {
-	Clipboard.setString(text)
-	copied(true);
+function copyToClipBoard (text, setCopyStatus) {
+	Clipboard.setStringAsync(text);
+	setCopyStatus(true);
 }
 
 function save(text, setSaveStatus, addNewItem) {
@@ -391,8 +400,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		alignSelf: 'center',
 		borderRadius: 15,
-		position: 'absolute',
-		bottom: 50,
+		width: '100%',
 		zIndex: 3,
 		shadowColor: 'black',
 		shadowOpacity: 0.2,
@@ -436,7 +444,7 @@ const styles = StyleSheet.create({
 	copyButton: {
 		flexDirection: 'row',
 		backgroundColor: '#b251db',
-		marginRight: 5,
+		marginRight: 7,
 		paddingVertical: 15,
 		flex: 1,
 		borderRadius: 8,
@@ -445,20 +453,11 @@ const styles = StyleSheet.create({
 		shadowRadius: 15,
 		justifyContent: 'center',
 		zIndex: 3,
-	},
-	copyIcon: {
-		color: 'white',
-		right: 50
-	},
-	copyText: {
-		fontSize: 17,
-		color: 'white',
-		left: 15
 	},
 	saveButton: {
 		flexDirection: 'row',
 		backgroundColor: '#b251db',
-		marginLeft: 5,
+		marginLeft: 7,
 		paddingVertical: 15,
 		flex: 1,
 		borderRadius: 8,
@@ -468,14 +467,20 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		zIndex: 3,
 	},
-	saveIcon: {
+	actionIcon: {
 		color: 'white',
-		right: 50,
+		position: 'absolute',
+		left: 12,
+		top: 12
 	},
-	saveText: {
+	actionText: {
 		fontSize: 17,
 		color: 'white',
-		left: 15
+		left: 5
+	},
+	actionDoneText: {
+		fontSize: 17,
+		color: 'white',
 	},
 	closeSummaryButton: {
 		position: 'absolute',
@@ -496,28 +501,6 @@ const styles = StyleSheet.create({
 		color: 'white',
 		fontSize: 26
 	},
-	copiedText: {
-		position: 'absolute',
-		bottom: 35,
-		flexDirection: 'row',
-		color: '#b251db',
-		left: '10%',
-		paddingVertical: 15,
-		width: '42%',
-		zIndex: 3,
-		fontSize: 20
-	},
-	savedText: {
-		position: 'absolute',
-		bottom: 35,
-		flexDirection: 'row',
-		color: '#b251db',
-		right: '10%',
-		paddingVertical: 15,
-		width: '42%',
-		zIndex: 3,
-		fontSize: 20
-	}
 });
 
 export default ScanScreen;
