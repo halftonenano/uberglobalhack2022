@@ -1,9 +1,13 @@
+import { useEffect, useRef, useState } from 'react';
+
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import { useEffect, useRef, useState } from 'react';
+import { useDatastore } from '../hooks/useDatastore';
 
 export default function SavedScreen({ navigation }) {
+
+	const { addNewItem, removeAllItems, getAllItems } = useDatastore();
 
 	const [ savedData, setSavedData ] = useState();
 	const dataInit = useRef();
@@ -11,34 +15,18 @@ export default function SavedScreen({ navigation }) {
 	useEffect(() => {
 		if (dataInit.current === undefined) {
 
-			let sampleText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Donec ultrices tincidunt arcu non sodales. Morbi tincidunt ornare massa eget. Pretium lectus quam id leo in vitae turpis massa. Faucibus a pellentesque sit amet porttitor. Cras fermentum odio eu feugiat pretium nibh. Feugiat in ante metus dictum at tempor commodo ullamcorper a. Bibendum at varius vel pharetra vel turpis. Aliquam eleifend mi in nulla posuere sollicitudin aliquam ultrices. Egestas sed sed risus pretium quam. Elit ut aliquam purus sit amet luctus venenatis lectus. Quis blandit turpis cursus in hac. Dui nunc mattis enim ut tellus.'
-
-			const exampleData = {
-				array: [
-					{ title: 'title1', time: '1658579054000', text: sampleText },
-					{ title: 'title2', time: '1658579054000', text: sampleText },
-					{ title: 'title3', time: '1658579054000', text: sampleText },
-					{ title: 'title4', time: '1658579054000', text: sampleText },
-					{ title: 'title1', time: '1658579054000', text: sampleText },
-					{ title: 'title2', time: '1658579054000', text: sampleText },
-					{ title: 'title3', time: '1658579054000', text: sampleText },
-					{ title: 'title4', time: '1658579054000', text: sampleText },
-				]
-			}
-
-			setSavedData(exampleData);
-
-			// getData().then((data) => setSavedData(JSON.parse(data)));
+			getAllItems().then((data) => setSavedData(data));
 
 			dataInit.current = 'data pulled';
 		}
+
 	});
 
 	return (
 		
 		<View style={styles.background}>
 			<TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuBar}>
-				<Ionicons name='menu-outline' size={40} color='white'></Ionicons>
+				<Ionicons name='menu-outline' size={35} color='white'></Ionicons>
 			</TouchableOpacity>
 			<Text style={styles.heading}>Saved</Text>
 			{/* <TouchableOpacity
@@ -56,7 +44,7 @@ export default function SavedScreen({ navigation }) {
 			{savedData !== undefined && (
 				<View>
 					<SafeAreaView style={styles.white}>
-						<ScrollView>
+						<ScrollView style={styles.scrollview}>
 							{savedData.array.map((item, index) => {
 								let timeStamp = dateFromMilsec(parseInt(item.time));
 								
@@ -84,19 +72,19 @@ export default function SavedScreen({ navigation }) {
 
 function dateFromMilsec(time) {
 	var dt = new Date(time);
-	var datee = `${(dt.getMonth() + 1)} / ${dt.getDate()}    ${dt.getHours()}:${dt.getMinutes()}`
+
+	var datee = `${(dt.getMonth() + 1)} / ${dt.getDate()}    ${dt.getHours()}:${String(dt.getMinutes()).length === 1 ? `0${dt.getMinutes()}` : dt.getMinutes()}`
 
 	return (datee);
 }
 
 const styles = StyleSheet.create({
 	card: {
-		width:'90%',
+		// width: '90%',
+		width: '100%',
 		height: 155,
-		// borderColor: '#b251db',
-		// borderWidth: 2,
 		alignSelf: 'center',
-		marginTop: 20,
+		marginTop: 18,
 		borderRadius: 15,
 		backgroundColor: 'white',
 		shadowColor: 'black',
@@ -114,6 +102,10 @@ const styles = StyleSheet.create({
 		// borderBottomColor: '#b251db',
 		// borderBottomWidth: 2,
 		zIndex: 3,
+	},
+	scrollview: {
+		paddingHorizontal: 18,
+		paddingBottom: 50
 	},
 	text: {
 		fontSize: 20,
@@ -146,7 +138,7 @@ const styles = StyleSheet.create({
 	},
 	menuBar: {
 		position: 'absolute',
-		top: 40,
+		top: 43,
 		left: 20,
 		zIndex: 10,
 	},
@@ -158,5 +150,7 @@ const styles = StyleSheet.create({
 		zIndex: 2,
 		borderTopLeftRadius: 15,
 		borderTopRightRadius: 15,
+		overflow: 'hidden',
+		// paddingBottom: 30
 	}
 });
