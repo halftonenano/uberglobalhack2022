@@ -27,7 +27,7 @@ export async function makeRequest(data, token, setRequestStatus, setDisplayText)
 
 
 
-	setRequestStatus('Generating Summary...');
+	setRequestStatus('Generating\n Summary...');
 
 	const { data: dataSummary } = await axios.post('https://api.textbooktldr.com/summarize', {
 		text: dataImageText
@@ -35,5 +35,5 @@ export async function makeRequest(data, token, setRequestStatus, setDisplayText)
 
 
 	setRequestStatus('Complete!');
-	setDisplayText(dataSummary.choices[0].text)
+	setTimeout(() => setDisplayText(dataSummary.choices[0].text), 1000);
 }
