@@ -51,7 +51,7 @@ function ScanScreen({ navigation }) {
 
 	if (previewVisible && capturedImage) {
 		return (
-			<CameraPreview photo={capturedImage} displayText={displayText} requestStatus={requestStatus} />
+			<CameraPreview photo={capturedImage} displayText={displayText} requestStatus={requestStatus} setPreviewVisible={setPreviewVisible()} />
 		);
 	}
 
@@ -86,7 +86,7 @@ function ScanScreen({ navigation }) {
 	);
 }
 
-function DisplaySummary({ displayText }) {
+function DisplaySummary({ displayText, setPreviewVisible}) {
 
 	// const { addNewItem, removeAllItems, getAllItems } = useDatastore();
 	// addNewItem({ title: 'title1', time: '1658579054000', text: 'fhdjghjkfdshgjkfdshjgkfdshjgkfdshjkgsdf' })
@@ -114,7 +114,9 @@ function DisplaySummary({ displayText }) {
 						</Text>
 					</ScrollView>
 				</SafeAreaView>
-				<TouchableOpacity style={styles.copyButton} title="Copy">
+				<TouchableOpacity 
+					style={styles.copyButton} title="Copy"
+				>
 					<Text style={styles.copyText}>
 						Copy
 					</Text>
@@ -131,7 +133,8 @@ function DisplaySummary({ displayText }) {
 	)
 }
 
-function CameraPreview({ photo, displayText, requestStatus }) {
+
+function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible }) {
 	return (
 	  <View style={styles.container}>
 			<ImageBackground
@@ -145,11 +148,20 @@ function CameraPreview({ photo, displayText, requestStatus }) {
 								<Text style={styles.text}>
 									{requestStatus}
 								</Text>
-								<Ionicons style={styles.animation} name='information-circle-outline' size={46} color='white' />
+								{requestStatus === 'You are not signed in' ? (
+									<TouchableOpacity
+									style={styles.iconDefault}
+									onPress={() => setPreviewVisible(false)}
+									>
+										<Ionicons style={styles.iconDefault} name='close' size={40} color='white' />
+									</TouchableOpacity>
+								) : (
+									<Ionicons style={styles.animation} name='information-circle-outline' size={46} color='white' />
+								)}
 							</View>
 						</View>
 					) : (
-						<DisplaySummary displayText={displayText} />
+						<DisplaySummary displayText={displayText} setPreviewVisible={setPreviewVisible()} />
 					)}				
 			</ImageBackground>
 		<StatusBar style='light' />
@@ -264,8 +276,8 @@ const styles = StyleSheet.create({
 	summary: {
 		marginLeft: 20,
 		marginRight: 20,
-		top: '17%',
-		height: '100%',
+		top: '30%',
+		height: 500,
 		fontSize: 17,
 	},
 	copyButton: {
