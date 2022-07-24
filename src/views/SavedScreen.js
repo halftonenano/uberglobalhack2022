@@ -147,7 +147,8 @@ const styles = StyleSheet.create({
 	menuBar: {
 		position: 'absolute',
 		top: 40,
-		left: 20
+		left: 20,
+		zIndex: 10,
 	},
 	white: {
 		bottom: -35,
