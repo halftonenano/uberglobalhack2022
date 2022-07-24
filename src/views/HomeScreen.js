@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import {
 	 View, 
 	 Text, 
@@ -8,7 +9,12 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import HomeImage from '../assets/Home.png';
 
+import useAccount, { TokenContext } from '../hooks/useAccount.js';
+
 function HomeScreen({ navigation }) {
+
+	const { promptSignin } = useAccount();
+	const { token } = useContext(TokenContext);
 
 	return (
 		<View style={styles.background}>
@@ -23,12 +29,25 @@ function HomeScreen({ navigation }) {
 						</Text>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity
-					style={styles.button}
-					onPress={() => navigation.navigate('Scan')}
-				>
-					<Ionicons name='camera-outline' style={styles.camera} size={50}/>
-				</TouchableOpacity>
+
+				{token !== '' ? (
+					<TouchableOpacity
+						style={styles.button}
+						onPress={() => navigation.navigate('Scan')}
+					>
+						<Ionicons name='camera-outline' style={styles.icon} size={50}/>
+					</TouchableOpacity>
+				) : (
+					<TouchableOpacity
+						style={styles.button}
+						onPress={() => promptSignin()}
+					>
+						<Ionicons name='log-in-outline' style={[ styles.icon, styles.iconWithLabel ]} size={38} />
+						<Text style={styles.iconLabel}>Sign in</Text>
+					</TouchableOpacity>
+				)}
+
+				
 			</View>
 		</View>
 	);
@@ -37,6 +56,7 @@ function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
 	row: {
 		flexDirection: 'row',
+		left: -20
 	},
 	background: {
 		backgroundColor: '#b251db',
@@ -68,7 +88,7 @@ const styles = StyleSheet.create({
 		// shadowColor: 'black',
 		// shadowOpacity: 0.2,
 		// shadowRadius: 25,
-		padding: 15,
+		padding: 35,
 		paddingTop: 20,
 	},
 	text: {
@@ -84,22 +104,34 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 	},
 	button: {
+		position: 'absolute',
+		bottom: 35,
+		flexDirection: 'row',
 		backgroundColor: '#b251db',
 		alignSelf: 'center',
-		paddingVertical: 10,
-		width: '90%',
+		paddingVertical: 15,
+		width: '100%',
 		borderRadius: 15,
 		shadowColor: 'black',
 		shadowOpacity: 0.2,
 		shadowRadius: 15,
-		position: 'absolute',
-		zIndex: 4,
-		bottom: 35
+		justifyContent: 'center',
+		zIndex: 3,
 	},
-	camera: {
+	icon: {
 		color: 'white',
 		alignSelf: 'center',
-	}
+	},
+	iconWithLabel: {
+		color: 'white',
+		alignSelf: 'center',
+		left: -15,
+	},
+	iconLabel: {
+		color: 'white',
+		alignSelf: 'center',
+		fontSize: 25,
+	},
 });
 
 export default HomeScreen;

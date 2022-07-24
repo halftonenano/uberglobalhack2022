@@ -22,6 +22,9 @@ function ScanScreen() {
 	const [ type, setType ] = useState(CameraType.back);
 	const camera = useRef(undefined);
 
+	const [ requestStatus, setRequestStatus ] = useState('uninitialized');
+	const [ displayText, setDisplayText ] = useState('');
+
 	useEffect(() => {
 		(async () => {
 			const { status } = await Camera.requestCameraPermissionsAsync();
@@ -36,7 +39,7 @@ function ScanScreen() {
 		const photo = await camera.current.takePictureAsync();
 		setPreviewVisible(true);
 		setCapturedImage(photo);
-		makeRequest(photo, token);
+		makeRequest(photo, token, setRequestStatus, setDisplayText);
 	}
 
 	function CameraPreview({ photo }) {
@@ -45,12 +48,12 @@ function ScanScreen() {
 				<ImageBackground
 					source={{uri: photo && photo.uri}}
 					style={styles.preview}
-					// blurRadius={75}
+					blurRadius={75}
 				>
 					<View style={styles.innerWrapper}>
 						<View style={styles.processPopup}>
 							<Text style={styles.text}>
-								Processing
+								{requestStatus}
 							</Text>
 							<Ionicons style={styles.sendIcon} name='send-outline' size={46} color='white' />
 							<Ionicons style={styles.timeIcon} name='time' size={23} color='white' />

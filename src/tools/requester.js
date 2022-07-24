@@ -1,7 +1,11 @@
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import axios from 'axios';
 
-export async function makeRequest(data, token) {
+export async function makeRequest(data, token, setRequestStatus, setDisplayText) {
+
+	if (token === '') return setRequestStatus('You are not signed in');
+
+	setRequestStatus('Resizing Image...');
 
 	const manipResult = await manipulateAsync(
 		data.uri,
@@ -11,22 +15,25 @@ export async function makeRequest(data, token) {
 		{ base64: true, compress: 0.8, format: SaveFormat.PNG }
 	);
 
-	axios.post('https://api.textbooktldr.com/analyze', {
-		image: manipResult.base64
-	}, {
-		headers: {
-			'Authorization': 'Bearer ' + token
-		}
-	}).then((response) => {
-		console.log(response.data);
-	}).catch((error) => console.log(error));
 
-	axios.post('https://api.textbooktldr.com/summarize', {
-	}, {
-		headers: {
-			'Authorization': 'Bearer ' + token
-		}
-	}).then((response) => {
-		console.log(response.data);
-	}).catch((error) => console.log(error));
+
+	setRequestStatus('Analyzing Text...');
+
+	const { data: dataImageText } = await axios.post('https://api.textbooktldr.com/analyze', {
+		image: manipResult.base64
+	}, { headers: { 'Authorization': 'Bearer ' + token } }).catch((error) => console.log(error));
+
+	console.log(dataImageText);
+
+
+
+	setRequestStatus('Generating Summary...');
+
+	const { data: dataSummary } = await axios.post('https://api.textbooktldr.com/summarize', {
+		text: dataImageText
+	}, { headers: { 'Authorization': 'Bearer ' + token } }).catch((error) => console.log(error));
+
+
+	setRequestStatus('Complete!');
+	setDisplayText(dataSummary.choices[0].text)
 }

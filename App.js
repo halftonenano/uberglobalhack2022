@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import {
 	StyleSheet
 } from 'react-native';
@@ -10,14 +10,13 @@ import CustomDrawerContent from './src/components/CustomDrawerContent';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { StatusBar } from 'expo-status-bar';
-import { Camera, CameraType } from 'expo-camera';
 
 import { TokenContext } from './src/hooks/useAccount';
 
-import HomeScreen from './src/views/Home';
-import ScanScreen from './src/views/Scan';
-import LoginScreen from './src/views/Login';
-import SavedScreen from './src/views/Saved';
+import HomeScreen from './src/views/HomeScreen';
+import ScanScreen from './src/views/ScanScreen';
+import SignInScreen from './src/views/SignInScreen';
+import SavedScreen from './src/views/SavedScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -29,7 +28,7 @@ export default function App() {
 		<TokenContext.Provider value={{ token, setToken }}>
 			<NavigationContainer styles={styles.navContainer}>
 				<Drawer.Navigator
-					initialRouteName='Home'
+					initialRouteName={'Home'}
 					screenOptions={{
 						drawerStyle: {
 						backgroundColor: '#b251db',
@@ -67,7 +66,7 @@ export default function App() {
 							return (<Ionicons name={focused ? 'document-text' : 'document-text-outline'} size={24} color={color} />);
 						}}}
 					/>
-					<Drawer.Screen name='Login' component={LoginScreen}
+					<Drawer.Screen name='Sign in' component={SignInScreen}
 						options={{ drawerIcon: ({ focused, color }) => {
 							return (<Ionicons name={focused ? 'log-in' : 'log-in-outline'} size={24} color={color} />);
 						}}}

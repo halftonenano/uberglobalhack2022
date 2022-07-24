@@ -5,7 +5,7 @@ import useAccount, { TokenContext } from '../hooks/useAccount.js';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import SigninImage from '../assets/SignIn.png';
 
-function LoginScreen() {
+function SignInScreen() {
 
 	const { promptSignin } = useAccount();
 
@@ -17,16 +17,19 @@ function LoginScreen() {
 				<Ionicons name='key' style={styles.graphic} size={300} />
 				<View style={styles.white}>
 					<View>
-						<TouchableOpacity
-							style={styles.button}
-							onPress={() => promptSignin()}
-						>
-							<Ionicons name='log-in-outline' style={styles.icon} size={38} />
-							<Text style={styles.text}>
-								Sign in
-							</Text>
-						</TouchableOpacity>
-						{token !== '' && <Text>{token}</Text>}
+						{token === '' ? (
+							<TouchableOpacity
+								style={styles.button}
+								onPress={() => promptSignin()}
+							>
+								<Ionicons name='log-in-outline' style={styles.icon} size={38} />
+								<Text style={styles.text}>
+									Sign in
+								</Text>
+							</TouchableOpacity>
+						) : (
+							<Text style={styles.signedInAlert}>Signed in!</Text>
+						)}
 					</View>
 				</View>
 			</View>
@@ -90,6 +93,12 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		zIndex: 3,
 	},
+	signedInAlert: {
+		alignSelf: 'center',
+		fontSize: 40,
+		color: '#b251db',
+		top: 50,
+	}
 });
 
-export default LoginScreen;
+export default SignInScreen;

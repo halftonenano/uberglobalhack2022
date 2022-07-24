@@ -58,15 +58,17 @@ export default function SavedScreen() {
 								let timeStamp = dateFromMilsec(parseInt(item.time));
 								
 								return (
-									<View key={index} style={styles.card}>
-										<View style={styles.top}>
-											<Text style={[ styles.text, styles.cardTitle ]}>{item.title}</Text>
-											<Text style={styles.text}>{timeStamp}</Text>
+									<TouchableOpacity key={index}>
+										<View style={styles.card}>
+											<View style={styles.top}>
+												<Text style={[ styles.text, styles.cardTitle ]}>{item.title}</Text>
+												<Text style={styles.text}>{timeStamp}</Text>
+											</View>
+											<View style={styles.passage}>
+												<Text numberOfLines={4} style={styles.size}>{item.text}</Text>
+											</View>
 										</View>
-										<View style={styles.passage}>
-											<Text numberOfLines={4} style={styles.size}>{item.text}</Text>
-										</View>
-									</View>
+									</TouchableOpacity>
 								);
 							})}
 						</ScrollView>
@@ -79,7 +81,7 @@ export default function SavedScreen() {
 
 function dateFromMilsec(time) {
 	var dt = new Date(time);
-	var datee = dt.getFullYear() + " / " + (dt.getMonth() + 1) + " / " + dt.getDate();
+	var datee = dt.getFullYear() + ' / ' + (dt.getMonth() + 1) + ' / ' + dt.getDate();
 
 	return (datee);
 }
