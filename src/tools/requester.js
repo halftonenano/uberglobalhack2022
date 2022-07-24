@@ -35,5 +35,5 @@ export async function makeRequest(data, token, setRequestStatus, setDisplayText)
 
 
 	setRequestStatus('Complete!');
-	setTimeout(() => setDisplayText(dataSummary.choices[0].text), 1000);
+	setTimeout(() => setDisplayText(JSON.stringify(dataSummary.choices[0].text), 1000));
 }
