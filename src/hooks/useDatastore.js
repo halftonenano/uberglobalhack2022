@@ -15,7 +15,21 @@ export function useDatastore() {
 	}
 
 	const removeAllItems = async () => {
-		await storeData({ array: [] });
+		await storeData(JSON.stringify({ array: [] }));
+	}
+
+	const overWriteItems = async (array) => {
+		await storeData(JSON.stringify({ array: array }));
+	}
+
+	const deleteItemAtIndex = async (index) => {
+
+		let { array } = await getAllItems();
+		array.splice(index, 1);
+
+		await storeData(JSON.stringify({ array: array }));
+
+		return { array: array };
 	}
 
 	const getAllItems = async () => {
@@ -23,9 +37,8 @@ export function useDatastore() {
 		if (currentData === null) { return { array: [] } }
 		return JSON.parse(currentData);
 	}
-
-	return { addNewItem, removeAllItems, getAllItems };
-
+	
+	return { addNewItem, removeAllItems, getAllItems, deleteItemAtIndex, overWriteItems };
 }
 
 async function storeData(value) {

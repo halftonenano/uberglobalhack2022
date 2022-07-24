@@ -123,28 +123,24 @@ function DisplaySummary({ displayText, setPreviewVisible, setDisplayText }) {
 				</ScrollView>
 			</SafeAreaView>
 			<View style={styles.row}>
-				{!copyStatus ? (
-					<TouchableOpacity 
-						style={styles.copyButton}
-						title="Copy"
-						onPress={() => copyToClipBoard(displayText, setCopyStatus)}
-					>
-						<Ionicons name="clipboard-outline" style={styles.actionIcon} size={24}/>
-						<Text style={styles.actionText}>
-							Copy
-						</Text>
-					</TouchableOpacity>
-				) : (
-					<TouchableOpacity 
-						style={styles.copyButton}
-						title="Copy"
-						onPress={() => copyToClipBoard(displayText, setCopyStatus)}
-					>
+				<TouchableOpacity 
+					style={styles.copyButton}
+					title="Copy"
+					onPress={() => copyToClipBoard(displayText, setCopyStatus)}
+				>
+					{!copyStatus ? (
+						<>
+							<Ionicons name="clipboard-outline" style={styles.actionIcon} size={24}/>
+							<Text style={styles.actionText}>
+								Copy
+							</Text>
+						</>
+					) : (
 						<Text style={styles.actionDoneText}>
 							Text copied!
 						</Text>
-					</TouchableOpacity>
-				)}
+					)}
+				</TouchableOpacity>
 				{!saveStatus ? (
 					<TouchableOpacity style={styles.saveButton}
 						onPress={() => save(displayText, setSaveStatus, addNewItem)}
@@ -254,7 +250,7 @@ function CancelAndCloseButton ({ text, setPreviewVisible, setDisplayText, needLo
 	);
 }
 
-function copyToClipBoard (text, setCopyStatus) {
+function copyToClipBoard(text, setCopyStatus) {
 	Clipboard.setStringAsync(text);
 	setCopyStatus(true);
 }
@@ -267,16 +263,13 @@ function save(text, setSaveStatus, addNewItem) {
 		[
 			{
 				text:'Cancel',
-				onPress: () => { console.log('Cancel Pressed') },
 				style: 'cancel'
 			},
 			{
 				text:'OK',
 				onPress: (title) => { 
-					console.log(`OK Pressed, title: ${title}`);
 					setSaveStatus(true);
 					addNewItem({ title: title, time: String(Date.now()), text: text });
-					console.log({ title: title, time: String(Date.now()), text: text });
 				}
 			}
 		]
@@ -374,7 +367,7 @@ const styles = StyleSheet.create({
 		shadowRadius: 15,
 	},
 	closeButton: {
-		backgroundColor: '#ECD5F6',
+		backgroundColor: 'white',
 		alignSelf: 'center',
 		width: '100%',
 		borderBottomLeftRadius: 15,
