@@ -205,12 +205,11 @@ function CameraPreview({ photo, displayText, requestStatus, setPreviewVisible, s
 											onPress={() => { 
 												setPreviewVisible(false);
 												initializeData(setDisplayText);
-												set
 											}}
 										>
 											<Ionicons style={styles.closeIcon} name='close' size={28} color='white' />
 											<Text style={styles.closeText}>
-												Close
+												Cancel
 											</Text>
 										</TouchableOpacity>
 									</>
